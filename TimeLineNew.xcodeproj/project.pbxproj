@@ -15,6 +15,8 @@
 		4929BACD1F7E3764002027F6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4929BACB1F7E3764002027F6 /* LaunchScreen.storyboard */; };
 		4929BAD51F7E39AC002027F6 /* TimeLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4929BAD41F7E39AC002027F6 /* TimeLineView.swift */; };
 		4929BAFB1F8DEAFC002027F6 /* YXDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4929BAFA1F8DEAFB002027F6 /* YXDateFormatter.swift */; };
+		4992BA6F1F9390B7002877E4 /* CDOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4992BA6E1F9390B7002877E4 /* CDOption.swift */; };
+		4992BA711F939292002877E4 /* JobModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4992BA701F939292002877E4 /* JobModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +30,8 @@
 		4929BACE1F7E3764002027F6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4929BAD41F7E39AC002027F6 /* TimeLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLineView.swift; sourceTree = "<group>"; };
 		4929BAFA1F8DEAFB002027F6 /* YXDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YXDateFormatter.swift; sourceTree = "<group>"; };
+		4992BA6E1F9390B7002877E4 /* CDOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CDOption.swift; sourceTree = "<group>"; };
+		4992BA701F939292002877E4 /* JobModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +66,8 @@
 			children = (
 				4929BABF1F7E3764002027F6 /* AppDelegate.swift */,
 				4929BAC11F7E3764002027F6 /* ViewController.swift */,
+				4992BA6E1F9390B7002877E4 /* CDOption.swift */,
+				4992BA701F939292002877E4 /* JobModel.swift */,
 				4929BAC31F7E3764002027F6 /* Main.storyboard */,
 				4929BAD41F7E39AC002027F6 /* TimeLineView.swift */,
 				4929BAFA1F8DEAFB002027F6 /* YXDateFormatter.swift */,
@@ -150,6 +156,8 @@
 				4929BAFB1F8DEAFC002027F6 /* YXDateFormatter.swift in Sources */,
 				4929BAC81F7E3764002027F6 /* TimeLineNew.xcdatamodeld in Sources */,
 				4929BAD51F7E39AC002027F6 /* TimeLineView.swift in Sources */,
+				4992BA6F1F9390B7002877E4 /* CDOption.swift in Sources */,
+				4992BA711F939292002877E4 /* JobModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
