@@ -9,18 +9,15 @@
 import Foundation
 
 extension Date {
+    //获取格式为"yyyy-MM-dd"的日期字符串
     func getString() -> String {
         let dateFormatter = DateFormatter()
-//        if let format = formatter {
-//            dateFormatter.dateFormat = format
-//        } else {
-//            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
-//        }
         dateFormatter.dateFormat = "yyyy-MM-dd"
         let dateStr = dateFormatter.string(from: self)
         return dateStr
     }
     
+    //根据传入的日期格式获取日期字符串
     func getStringFrom(formatter: String) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = formatter
@@ -28,18 +25,13 @@ extension Date {
         return dateStr
     }
     
-//    func getTimeStamp(fromString str: String) -> Int32 {
+    //获取时间戳
     func getTimeStamp() -> Int32 {
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
-//        let timeStamp = 0
-//        if let date = dateFormatter.date(from: str) {
-//           timeStamp  = Int(date.timeIntervalSince1970)
-//        }
         let timeStamp  = Int32(self.timeIntervalSince1970)
         return timeStamp
     }
     
+    //根据日期字符串获取对应日期
     static func getDateFrom(string: String) -> Date {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"

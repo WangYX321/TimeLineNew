@@ -32,7 +32,8 @@ class ViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(self.scollStateUnable), name: NSNotification.Name("UnableScroll"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.scollStateAble), name: NSNotification.Name("AbleScroll"), object: nil)
 //        NotificationCenter.default.addObserver(self, selector: #selector(self.becomeEditingState), name: NSNotification.Name("becomeEditingEvent"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.showAlert), name: NSNotification.Name("ShowAlert"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.showAddAlert), name: NSNotification.Name("ShowAddAlert"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.showDeleteAlert), name: NSNotification.Name("ShowDeleteAlert"), object: nil)
 //        NotificationCenter.default.addObserver(self, selector: #selector(self.resignEditingState), name: NSNotification.Name("resignEditingEvent"), object: nil)
         
     }
@@ -60,7 +61,7 @@ class ViewController: UIViewController {
         self.configureNavigationItem()
     }
     
-    @objc func showAlert() {
+    @objc func showAddAlert() {
         let alert = UIAlertController(title: "新建日程", message: "请填写日程内容", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "取消", style: .cancel, handler: nil))
         alert.addTextField { textField in
@@ -78,6 +79,17 @@ class ViewController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
+    @objc func showDeleteAlert() {
+        let alert = UIAlertController(title: "删除日程", message: "确定要删除此日程吗？", preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil)
+        let doneAction = UIAlertAction(title: "确定", style: .default) { action in
+            self.timeLineView!.deleteEvent()
+        }
+        alert.addAction(cancelAction)
+        alert.addAction(doneAction)
+        self.present(alert, animated: true, completion: nil)
+        
+    }
 //    @objc func resignEditingState() {
 //        isEditingEvent = false
 //        self.configureNavigationItem()

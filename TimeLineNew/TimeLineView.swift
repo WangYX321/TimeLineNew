@@ -41,7 +41,8 @@ class TimeLineView: UIView {
     
     var tipLabel : UILabel?//提示时间
     var gesView : UIView?
-    var focusLabel : UILabel?
+//    var focusLabel : UILabel?
+    var deleteId : Int?//选中将要删除的job的createTime对应的ID
     
     var allWidth = UIScreen.main.bounds.size.width * 12//TimeLineView总宽度
 //    let allHeight = self.bounds.size.height
@@ -65,18 +66,22 @@ class TimeLineView: UIView {
         self.dateType = type
         self.configureTimePoints()
         
+        self.createGestureView()
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
+    @objc func createGestureView() {
         let margin = (allWidth - width * CGFloat(points.count - 1)) / 2
         gesView = UIView(frame: CGRect(x: margin - 10, y: allHeight/2 - 20, width: allWidth - margin*2 + 20, height: 40))
-//        gesView.backgroundColor = UIColor.yellow
+        //        gesView.backgroundColor = UIColor.yellow
         self.addSubview(gesView!)
         let longGes = UILongPressGestureRecognizer(target: self, action: #selector(TimeLineView.longPressAction(_:)))
         longGes.allowableMovement = 999
         longGes.minimumPressDuration = 2
-        gesView!.addGestureRecognizer(longGes)                
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+        gesView!.addGestureRecognizer(longGes)
     }
     
     @objc func longPressAction(_ sender:UILongPressGestureRecognizer) {
@@ -112,9 +117,9 @@ class TimeLineView: UIView {
             if fabsf(Float(location.y - allHeight/2)) < 20 {//如果上下范围在手势区域内，则画线位置增加偏移量
                 endPoint = CGPoint(x: location.x, y: location.y<allHeight/2 ? location.y - 20 : location.y + 20)
             } else {
-                endPoint = location
+                endPoint = CGPoint(x: location.x < startPoint.x ? startPoint.x - 150 : startPoint.x + 150, y: location.y)
                 
-                NotificationCenter.default.post(name: NSNotification.Name("ShowAlert"), object: nil)
+                NotificationCenter.default.post(name: NSNotification.Name("ShowAddAlert"), object: nil)
                 
             }
 //            endPoint = sender.location(in: self)
@@ -180,7 +185,7 @@ class TimeLineView: UIView {
 //        layer.add(animation, forKey: "addLayerAnimationPosition")
 //    }
     
-    //MARK 画线操作
+    //MARK: 画线操作
     func drawLine(start: CGPoint, end: CGPoint) {
         let bezierPath = UIBezierPath()
         bezierPath.move(to: CGPoint(x: start.x, y: allHeight / 2))
@@ -226,31 +231,101 @@ class TimeLineView: UIView {
 //        keyAnima.isRemovedOnCompletion = false
 //        moveV.layer.add(keyAnima, forKey: "moveAnimation")
         
-        let xPoint = start.x < end.x ? start.x : end.x
-        let yPoint = end.y - 34
-
-        let label = UILabel(frame:  CGRect(x: xPoint, y: yPoint, width: 100, height: 34))
-        label.numberOfLines = 0
-        self.addSubview(label)
-        focusLabel = label
+//        let xPoint = start.x < end.x ? start.x : end.x
+//        let yPoint = end.y - 34
+//
+//        let label = UILabel(frame:  CGRect(x: xPoint, y: yPoint, width: 150, height: 34))
+//        label.numberOfLines = 0
+//        self.addSubview(label)
+//        focusLabel = label
 //        let textField = UITextField(frame: CGRect(x: xPoint, y: yPoint, width: 100, height: 34))
 //        textField.delegate = self
 //        self.addSubview(textField)
 //        textField.becomeFirstResponder()
     }
     
+    //MARK: 画线操作
+//    func drawClearLine(start: CGPoint, end: CGPoint) {
+//        let bezierPath = UIBezierPath()
+//        bezierPath.move(to: CGPoint(x: start.x, y: start.y))
+//        bezierPath.addLine(to: CGPoint(x: end.x, y: start.y))
+//        bezierPath.addLine(to: CGPoint(x: end.x, y: end.y))
+//
+//        //画线
+//        let shapeLayer = CAShapeLayer()
+//        shapeLayer.strokeColor = UIColor.white.cgColor
+//        shapeLayer.fillColor = UIColor.clear.cgColor
+//        shapeLayer.lineWidth = 2
+//        shapeLayer.lineJoin = kCALineJoinRound
+//        shapeLayer.lineCap = kCALineCapRound
+//        shapeLayer.path = bezierPath.cgPath
+//        self.layer.addSublayer(shapeLayer)
+//        //        print("\(self.layer.sublayers)")
+//
+//        let pathAnim = CABasicAnimation(keyPath: "strokeEnd")
+//        pathAnim.duration = 5.0
+//        pathAnim.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+//        pathAnim.fromValue = 0//开始
+//        pathAnim.toValue = 1//到100%
+//        //        pathAnim.autoreverses = true// 动画按原路径返回
+//        pathAnim.fillMode = kCAFillModeForwards
+//        //        pathAnim.isRemovedOnCompletion = false
+//        //        pathAnim.repeatCount = Float.infinity
+//        shapeLayer.add(pathAnim, forKey: "strokeClearEndAnim")
+//    }
+    
     func addEvent(content: String) {
         self.drawLine(start: startPoint, end: endPoint)
-        focusLabel?.text = content
+//        focusLabel?.text = content
+        let xPoint = startPoint.x < endPoint.x ? startPoint.x : endPoint.x
+        let yPoint = endPoint.y - 34
+        let label = UILabel(frame:  CGRect(x: xPoint, y: yPoint, width: 150, height: 34))
+        label.numberOfLines = 0
+        self.addSubview(label)
+        label.isUserInteractionEnabled = true
+        let longPressGes = UILongPressGestureRecognizer(target: self, action: #selector(self.showDeleteAlertLongPressAction(_ :)))
+        longPressGes.minimumPressDuration = 1.5
+        label.addGestureRecognizer(longPressGes)
+        label.text = content
+//        focusLabel = label
         
         let model = JobModel()
-        model.date = Date.getDateFrom(string: "\(currentDate.getString()) \(String(describing: tipLabel!.text))")
+        model.date = Date.getDateFrom(string: "\(currentDate.getString()) \(tipLabel!.text!)")
+        print(String(describing: tipLabel!.text))
         model.name = content
         model.endPoint = endPoint
+        model.createTime = Date().getTimeStamp()
+        label.tag = Int(model.createTime)
         CDOption.insertData(model: model)
     }
     
-    //MARK 配置时间轴的所有时间点位置
+    //MARK: 删除事件
+    @objc func deleteEvent() {
+        CDOption.deleteData(modelId: deleteId!) { isSuccess in
+            if isSuccess {
+                // 移除所有子视图
+                _ = self.subviews.map {                    
+                    $0.removeFromSuperview()
+                }
+                self.layer.sublayers?.forEach {
+                    $0.removeFromSuperlayer()
+                }
+                self.tipLabel = nil
+                self.setNeedsDisplay()
+                self.configureTimePoints()
+                self.createGestureView()
+                
+//                let label = self.viewWithTag(self.deleteId!) as? UILabel
+//                label?.removeFromSuperview()
+//
+//                let start = deleteModel.endPoint
+//                let end = self.getEventStartPoint(time: Date(timeIntervalSince1970: TimeInterval(deleteModel.createTime)))
+//                self.drawClearLine(start: start, end: end)
+            }
+        }
+    }
+    
+    //MARK: 配置时间轴的所有时间点位置
     func configureTimePoints() {
         points.removeAll()
         
@@ -275,6 +350,18 @@ class TimeLineView: UIView {
                 let start = self.getEventStartPoint(time: item.date)
                 let end = item.endPoint
                 self.drawLine(start: start, end: end)
+                
+                let xPoint = start.x < end.x ? start.x : end.x
+                let yPoint = end.y - 34
+                let label = UILabel(frame:  CGRect(x: xPoint, y: yPoint, width: 150, height: 34))
+                label.numberOfLines = 0
+                label.text = item.name
+                label.tag = Int(item.createTime)
+                self.addSubview(label)
+                label.isUserInteractionEnabled = true
+                let longPressGes = UILongPressGestureRecognizer(target: self, action: #selector(self.showDeleteAlertLongPressAction(_ :)))
+                longPressGes.minimumPressDuration = 1.5
+                label.addGestureRecognizer(longPressGes)
             }
             
         case .week:
@@ -304,7 +391,7 @@ class TimeLineView: UIView {
         
     }
     
-    //MARK 获取时间轴上的时间提示
+    //MARK: 获取时间轴上的时间提示
     func getTimeString(point: CGPoint) -> String {
         let minuteWidth = Int(width/12)
         let hourWidth = Int(width)
@@ -312,12 +399,15 @@ class TimeLineView: UIView {
         let hour = (Int(point.x) - timeLineStartPoint) / hourWidth
         let minute = Int(point.x) - timeLineStartPoint - hour*hourWidth
         let minutesNum = minute/minuteWidth > 11 ? 11 : minute/minuteWidth
-        let timeStr = "\(hour):\(minutesNum*5)"
+        
+        let hourFormatter = hour < 10 ? "0\(hour)" : "\(hour)"
+        let minuteFormatter = minutesNum < 2 ? "0\(minutesNum*5)" : "\(minutesNum*5)"
+        let timeStr = "\(hourFormatter):\(minuteFormatter)"
         print(timeStr)
         return timeStr
     }
     
-    //MARK 获取时间轴上的时间提示的开始位置
+    //MARK: 获取时间轴上的时间提示的开始位置
 //    func getEventStartPoint(timeStr: String) -> CGPoint {
     func getEventStartPoint(time: Date) -> CGPoint {
         let timeStr = time.getStringFrom(formatter: "yyyy-MM-dd HH:mm")
@@ -326,7 +416,7 @@ class TimeLineView: UIView {
         let hourWidth = Int(width)
         let timeLineStartPoint = Int((allWidth - width * 24) / 2)
         let hours = hourWidth * Int(timeArr[1])!
-        let minutes = minuteWidth * Int(timeArr[2])!
+        let minutes = minuteWidth * Int(timeArr[2])!/5
         let startPoint = CGPoint(x: CGFloat(timeLineStartPoint + hours + minutes), y: allHeight/2)
         return startPoint
     }
@@ -361,20 +451,10 @@ class TimeLineView: UIView {
         
     }
     
-    func reloadData() {
-        self.setNeedsDisplay()
-        self.configureTimePoints()
+    @objc func showDeleteAlertLongPressAction(_ sender: UILongPressGestureRecognizer) {
+        if sender.state == .began {
+            deleteId = sender.view?.tag
+            NotificationCenter.default.post(name: NSNotification.Name("ShowDeleteAlert"), object: nil)
+        }
     }
-    //MARK UITextFieldDelegate
-//    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-//        NotificationCenter.default.post(name: NSNotification.Name("becomeEditingEvent"), object: nil)
-//        NotificationCenter.default.post(name: NSNotification.Name("UnableScroll"), object: nil, userInfo: nil)
-//        gesView?.isUserInteractionEnabled = false
-//        return true
-//    }
-//
-//    func textFieldDidEndEditing(_ textField: UITextField) {
-//        NotificationCenter.default.post(name: NSNotification.Name("AbleScroll"), object: nil, userInfo: nil)
-//        gesView?.isUserInteractionEnabled = true
-//    }
 }

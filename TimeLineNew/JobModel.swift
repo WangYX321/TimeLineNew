@@ -13,10 +13,12 @@ class JobModel {
     var name : String
     var endPoint : CGPoint
     var date : Date
+    var createTime : Int32//每个对象的唯一值（相当于ID）
     
     init() {
         name = ""
         endPoint = CGPoint()
         date = Date()
+        createTime = 0
     }
 }
